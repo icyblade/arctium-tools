@@ -202,8 +202,6 @@ namespace DataExtractor
                                     table.Columns.Add(f.Name + i, arr.GetType().GetElementType());
                             }
                         }
-                        else if (f.FieldType == typeof(int))
-                            table.Columns.Add(f.Name);
                         else
                             table.Columns.Add(f.Name, f.FieldType);
                     }

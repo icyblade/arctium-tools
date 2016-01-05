@@ -1,0 +1,3 @@
+[submodule "World of Warcraft/Source/DataExtractor/Libraries/LappaPluralization"]
+	path = World of Warcraft/Source/DataExtractor/Libraries/LappaPluralization
+	url = https://github.com/Arctium-Software/LappaPluralization.git

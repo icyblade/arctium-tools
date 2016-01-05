@@ -36,7 +36,7 @@ namespace CASC_Lib.FileSystem.Structures
                     var key = data[0].Trim();
                     var value = data[1].Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    entries.Add(data[0].Trim(), value);
+					entries.Add(key, value);
                 }
             }
         }

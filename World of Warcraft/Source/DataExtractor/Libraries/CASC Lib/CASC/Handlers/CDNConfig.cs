@@ -42,14 +42,14 @@ namespace CASC_Lib.CASC.Handlers
                     var key = data[0].Trim();
                     var value = data[1].Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    entries.Add(data[0].Trim(), value);
+                    entries.Add(key, value);
                 }
             }
         }
 
         public BinaryReader DownloadFile(string archive, IndexEntry indexEntry)
         {
-            var url = $"http://{DownloadUrl}/data/{archive.GetHexAt(0)}/{archive.GetHexAt(2)}/{archive}.index";
+            //var url = $"http://{DownloadUrl}/data/{archive.GetHexAt(0)}/{archive.GetHexAt(2)}/{archive}.index";
 
             throw new NotImplementedException("CDNConfig.DownloadFile not implemented.");
         }

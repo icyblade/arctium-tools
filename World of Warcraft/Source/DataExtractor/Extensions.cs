@@ -3,30 +3,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using LappaPluralization;
 
 namespace DataExtractor.Reader
 {
     public static class Extensions
     {
-        // Create only one service
-        static PluralizationService pluralService = PluralizationService.CreateService(new CultureInfo("en-US"));
-
-        public static string Pluralize(this string s)
-        {
-            var pluralized = pluralService.Pluralize(s);
-
-            // Handle some language exceptions
-            if (pluralized.EndsWith("Datas"))
-                return pluralized.Remove(pluralized.Length - 1, 1);
-            else if (pluralized.EndsWith("Infoes"))
-                return pluralized.Remove(pluralized.Length - 2, 2);
-
-            return pluralized;
-        }
         public static Dictionary<Type, Func<BinaryReader, object>> ReadValue = new Dictionary<Type, Func<BinaryReader, object>>()
         {
             { typeof(bool),   br => br.ReadBoolean() },
@@ -147,5 +132,7 @@ namespace DataExtractor.Reader
 
             bw.Write(bytes);
         }
+
+		public static string Pluralize (this string s) => Program.pluralService.Pluralize(s);
     }
 }
