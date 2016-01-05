@@ -133,6 +133,6 @@ namespace DataExtractor.Reader
             bw.Write(bytes);
         }
 
-		public static string Pluralize (this string s) => Program.pluralService.Pluralize(s);
+        public static string Pluralize (this string s) => Program.pluralService.Pluralize(s);
     }
 }

@@ -25,30 +25,30 @@ namespace DataExtractor
 {
     class Program
     {
-		public static PluralizationService pluralService;
+        public static PluralizationService pluralService;
         static CASCHandler cascHandler;
-		static bool isMacOrUnix = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX;
-		static string appFolder;
-		static string locale;
+        static bool isMacOrUnix = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX;
+        static string appFolder;
+        static string locale;
 
-		static void ReadConsoleArgs(string[] args)
-		{
-			for (int i = 1; i < args.Length; i += 2)
-			{
-				switch (args[i - 1])
-				{
-					case "-app":
-						appFolder = args[i];
-						break;
-				    case "-locale":
-					    locale = args[i];
-					    break;
-				    default:
-						Console.WriteLine($"'{args[i - 1]}' isn't a valid argument.");
-					    break;
-				}
-			}
-		}
+        static void ReadConsoleArgs(string[] args)
+        {
+            for (int i = 1; i < args.Length; i += 2)
+            {
+                switch (args[i - 1])
+                {
+                    case "-app":
+                        appFolder = args[i];
+                        break;
+                    case "-locale":
+                        locale = args[i];
+                        break;
+                    default:
+                        Console.WriteLine($"'{args[i - 1]}' isn't a valid argument.");
+                        break;
+                }
+            }
+        }
 
         static void Main(string[] args)
         {
@@ -70,34 +70,34 @@ namespace DataExtractor
 
             Console.ForegroundColor = ConsoleColor.Gray;
 
-			ReadConsoleArgs(args);
+            ReadConsoleArgs(args);
 
-			if (isMacOrUnix && string.IsNullOrEmpty(appFolder))
-				Console.WriteLine ("Please use your '.app' folder as start parameter.");
-			else
-			{
-				pluralService = new PluralizationService();
+            if (isMacOrUnix && string.IsNullOrEmpty(appFolder))
+                Console.WriteLine ("Please use your '.app' folder as start parameter.");
+            else
+            {
+                pluralService = new PluralizationService();
 
-				pluralService.AddException("gtNpcTotalHp");
+                pluralService.AddException("gtNpcTotalHp");
 
-	            Console.WriteLine("Initializing CASC library...");
+                Console.WriteLine("Initializing CASC library...");
 
-				if (string.IsNullOrEmpty(appFolder))
-					cascHandler = new CASCHandler(Environment.CurrentDirectory);
-				else
-					cascHandler = new CASCHandler(Directory.GetParent(appFolder).ToString());
+                if (string.IsNullOrEmpty(appFolder))
+                    cascHandler = new CASCHandler(Environment.CurrentDirectory);
+                else
+                    cascHandler = new CASCHandler(Directory.GetParent(appFolder).ToString());
 
-	            Console.WriteLine("Done.");
+                Console.WriteLine("Done.");
 
-	            ExtractClientDBData();
+                ExtractClientDBData();
 
-	            Console.WriteLine("Done.");
+                Console.WriteLine("Done.");
 
-	            ExtractMapData();
+                ExtractMapData();
 
-	            Console.WriteLine();
-	            Console.WriteLine("Press any key to exit...");
-			}
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+            }
 
             Console.ReadKey(true);
         }
@@ -162,7 +162,7 @@ namespace DataExtractor
             var wowBin = cascHandler.BasePath + "/Wow.exe";
             var wowBBin = cascHandler.BasePath + "/WowB.exe";
             var wowTBin = cascHandler.BasePath + "/WowT.exe";
-			var wowXBin = appFolder + "/Contents/MacOS/World of Warcraft";
+            var wowXBin = appFolder + "/Contents/MacOS/World of Warcraft";
             var bin = "";
 
             if (File.Exists(wowBin))
@@ -201,8 +201,8 @@ namespace DataExtractor
 
             var locales = new Dictionary<string, Locales>();
 
-			if (!string.IsNullOrEmpty(Program.locale))
-				locales.Add(Program.locale, (Locales)Enum.Parse(typeof(Locales), Program.locale));
+            if (!string.IsNullOrEmpty(Program.locale))
+                locales.Add(Program.locale, (Locales)Enum.Parse(typeof(Locales), Program.locale));
             else
             {
                 var buildInfo = File.ReadAllText(cascHandler.BasePath + "/.build.info").Split(new[] { '|' })[21];
