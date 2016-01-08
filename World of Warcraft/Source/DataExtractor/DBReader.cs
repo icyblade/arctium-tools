@@ -268,13 +268,7 @@ namespace DataExtractor
                                     row[f.Name] = dbReader.ReadUInt16();
                                     break;
                                 case "Int32":
-                                    var dword = dbReader.ReadDword();
-
-                                    if (dword.Item2 > int.MaxValue)
-                                        row[f.Name] = dword.Item2;
-                                    else
-                                        row[f.Name] = dword.Item1;
-
+                                    row[f.Name] = dbReader.ReadInt32();
                                     break;
                                 case "UInt32":
                                     row[f.Name] = dbReader.ReadUInt32();
@@ -343,14 +337,7 @@ namespace DataExtractor
                                     length = ((int[])f.GetValue(newObj)).Length;
 
                                     for (var j = 0; j < length; j++)
-                                    {
-                                        dword = dbReader.ReadDword();
-
-                                        if (dword.Item2 > int.MaxValue)
-                                            row[f.Name + j] = dword.Item2;
-                                        else
-                                            row[f.Name + j] = dword.Item1;
-                                    }
+                                        row[f.Name + j] = dbReader.ReadInt32();
                                     break;
                                 case "UInt32[]":
                                     length = ((uint[])f.GetValue(newObj)).Length;
