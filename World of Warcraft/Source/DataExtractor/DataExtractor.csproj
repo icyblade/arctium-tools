@@ -55,12 +55,15 @@
     <Compile Include="DBReader.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Maps\Defines\Map.cs" />
-    <Compile Include="Maps\Defines\MapChunk.cs" />
     <Compile Include="Maps\Defines\MapDB.cs" />
     <Compile Include="Maps\MapReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Maps\APAKStream.cs" />
+    <Compile Include="Maps\Defines\APAK.cs" />
+    <Compile Include="Maps\Defines\MapTile.cs" />
+    <Compile Include="Maps\Defines\MapChunk.cs" />
   </ItemGroup>
   <Import Project="Libraries\CASC Lib\CASC Lib.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

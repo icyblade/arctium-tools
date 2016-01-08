@@ -110,6 +110,9 @@ namespace DataExtractor
 
             var mapDBC = cascHandler.ReadFile(@"DBFilesClient\Map.dbc");
             var mapDBData = DBReader.Read(mapDBC, typeof(MapDB));
+            var apakStream = new APAKStream();
+            var writtenMapCount = 0;
+            var apakLock = new object();
 
             Parallel.For(0, mapDBData.Rows.Count, i =>
             {
@@ -121,17 +124,12 @@ namespace DataExtractor
                 if (mapType == 3 || mapType == 4)
                     return;
 
-                var map = new Map { Id = mapId, Name = mapName };
                 var mapReader = new MapReader();
-
-                // Version 1
-                // 1 P A M (01 50 41 4D ) = MAP1
-                mapReader.Write(new byte[] { 0x01, 0x50, 0x41, 0x4D });
-                mapReader.Write(map.Id, 11);
-                mapReader.Write(Encoding.UTF8.GetBytes(mapName).Length, 7);
-                mapReader.Write(Encoding.UTF8.GetBytes(mapName));
-
-                mapReader.Flush();
+                var map = new Map
+                {
+                    Id = mapId, 
+                    Name = mapName 
+                };
 
                 for (var j = 0; j < 64; j++)
                 {
@@ -147,10 +145,24 @@ namespace DataExtractor
                     }
                 }
 
-                File.WriteAllBytes( $"./Project-WoW/Maps/{map.Id:0000}.map", mapReader.Finish(map).ToArray());
+                if (map.Tiles != null)
+                {
+                    lock (apakLock)
+                    {
+                        apakStream.WriteMap(map);
 
-                Console.WriteLine($"Extraction of map '{mapName}' done.");
+                        Console.WriteLine($"Extraction of map '{mapName}' done.");
+
+                        ++writtenMapCount;
+                    }
+                }
             });
+
+            apakStream.BaseStream.Position = 5;
+
+            apakStream.Write((ushort)writtenMapCount);
+
+            File.WriteAllBytes(Directory.GetParent(appFolder) + "/Project-WoW/adt.apak", (apakStream.BaseStream as MemoryStream).ToArray());
         }
 
         static void ExtractClientDBData()
@@ -222,8 +234,8 @@ namespace DataExtractor
                 }
             }
 
-            Directory.CreateDirectory("./Project-WoW/ClientDB/SQL");
-            Directory.CreateDirectory("./Project-WoW/ClientDB/Files");
+            Directory.CreateDirectory(Directory.GetParent(appFolder) + "/Project-WoW/ClientDB/SQL");
+            Directory.CreateDirectory(Directory.GetParent(appFolder) + "/Project-WoW/ClientDB/Files");
 
             /// Files
             Console.WriteLine("Extracting files...");
@@ -243,9 +255,9 @@ namespace DataExtractor
 
                     if (dbStream != null)
                     {
-                        Directory.CreateDirectory($"./Project-WoW/ClientDB/Files/{locale.Key}");
+                        Directory.CreateDirectory($"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/Files/{locale.Key}");
 
-                        Task.Run(() => FileWriter.WriteFile(dbStream, $"./Project-WoW/ClientDB/Files/{locale.Key}/{nameOnly}"));
+                        Task.Run(() => FileWriter.WriteFile(dbStream, $"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/Files/{locale.Key}/{nameOnly}"));
 
                         Console.ForegroundColor = ConsoleColor.Green;
 
@@ -302,18 +314,18 @@ namespace DataExtractor
             var generatedTables = new List<string>();
             var counter = 0;
 
-            var noLocaleMSSQL = new StreamWriter($"./Project-WoW/ClientDB/SQL/DataDB.MSSQL.sql");
-            var noLocaleMYSQL = new StreamWriter($"./Project-WoW/ClientDB/SQL/DataDB.MYSQL.sql");
+            var noLocaleMSSQL = new StreamWriter($"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/SQL/DataDB.MSSQL.sql");
+            var noLocaleMYSQL = new StreamWriter($"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/SQL/DataDB.MYSQL.sql");
 
             foreach (var locale in locales)
             {
-                var localeMSSQL = new StreamWriter($"./Project-WoW/ClientDB/SQL/{locale.Key}_DataDB.MSSQL.sql");
-                var localeMYSQL = new StreamWriter($"./Project-WoW/ClientDB/SQL/{locale.Key}_DataDB.MYSQL.sql");
+                var localeMSSQL = new StreamWriter($"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/SQL/{locale.Key}_DataDB.MSSQL.sql");
+                var localeMYSQL = new StreamWriter($"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/SQL/{locale.Key}_DataDB.MYSQL.sql");
 
                 foreach (var file in existingStructList)
                 {
                     var nameOnly = file.Replace(@"\\", "").Replace(@"DBFilesClient\", "");
-                    var path = $"./Project-WoW/ClientDB/Files/{locale.Key}/{nameOnly}";
+                    var path = $"{Directory.GetParent(appFolder)}/Project-WoW/ClientDB/Files/{locale.Key}/{nameOnly}";
 
                     if (!File.Exists(path))
                     {
