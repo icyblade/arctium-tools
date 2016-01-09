@@ -113,6 +113,7 @@ namespace DataExtractor
             var apakStream = new APAKStream();
             var writtenMapCount = 0;
             var apakLock = new object();
+            var mapOffsets = new Dictionary<ushort, uint>();
 
             Parallel.For(0, mapDBData.Rows.Count, i =>
             {
@@ -149,7 +150,9 @@ namespace DataExtractor
                 {
                     lock (apakLock)
                     {
-                        apakStream.WriteMap(map);
+                        mapOffsets.Add(map.Id, (uint)(apakStream.BaseStream.Position + apakStream.MapStream.BaseStream.Length));
+
+                        apakStream.GenerateMapData(map);
 
                         Console.WriteLine($"Extraction of map '{mapName}' done.");
 
@@ -157,9 +160,13 @@ namespace DataExtractor
                     }
                 }
             });
+                
+            foreach (var kp in mapOffsets)
+                apakStream.WriteMapDataOffsets(kp.Key, (uint)(kp.Value + writtenMapCount * 6));
+
+            apakStream.Finish();
 
             apakStream.BaseStream.Position = 5;
-
             apakStream.Write((ushort)writtenMapCount);
 
             File.WriteAllBytes(Directory.GetParent(appFolder) + "/Project-WoW/adt.apak", (apakStream.BaseStream as MemoryStream).ToArray());

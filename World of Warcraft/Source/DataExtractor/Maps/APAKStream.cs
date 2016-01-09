@@ -11,14 +11,24 @@ namespace DataExtractor
 {
     public class APAKStream : BinaryWriter
     {
+        public BinaryWriter MapStream { get; }
+
         public APAKStream() : base(new MemoryStream())
         {
+            MapStream = new BinaryWriter(new MemoryStream());
+
             Write(new[] { 'K', 'A', 'P', 'A' });
             Write((byte)1);
             Write((ushort)0);
         }
 
-        public void WriteMap(Map map)
+        public void WriteMapDataOffsets(ushort map, uint offset)
+        {
+            Write(map);
+            Write(offset);
+        }
+
+        public void GenerateMapData(Map map)
         {
             using (var temp = new BinaryWriter(new MemoryStream()))
             {
@@ -38,17 +48,17 @@ namespace DataExtractor
                     });
                 }
 
-                var tileData = (temp.BaseStream as MemoryStream).ToArray();
-                var compressedTileData = Compress(tileData);
+                var compressedTileData = Compress((temp.BaseStream as MemoryStream).ToArray());
 
-                Write(map.Id);
-                Write(map.Name);
+                MapStream.Write(map.Id);
+                MapStream.Write(map.Name);
 
-                Write(tileData.Length);
-                Write(compressedTileData.Length);
-                Write(compressedTileData);
+                MapStream.Write(compressedTileData.Length);
+                MapStream.Write(compressedTileData);
             }
         }
+
+        public void Finish() => Write((MapStream.BaseStream as MemoryStream).ToArray());
 
         byte[] Compress(byte[] data)
         {

@@ -20,11 +20,9 @@ namespace DataExtractor.Maps.Defines
             }
         }
 
-        public uint CompressedSize { get; set; }
-        public uint UnCompressedSize { get; set; }
-
         public ushort Id   { get; set; }
         public string Name { get; set; }
+        public uint Size   { get; set; }
 
         public ConcurrentDictionary<ushort, MapTile> Tiles { get; set; }
     }

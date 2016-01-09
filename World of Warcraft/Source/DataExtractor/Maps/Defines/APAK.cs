@@ -20,10 +20,10 @@ namespace DataExtractor.Maps.Defines
             }
         }
 
-        public string Magic { get; set; } // KAPA
-        public byte Version { get; set; } // 1
-
+        public string Magic    { get; set; }
+        public byte Version    { get; set; }
         public ushort MapCount { get; set; }
+
         public ConcurrentDictionary<ushort, Map> Maps  { get; set; }
     }
 }
