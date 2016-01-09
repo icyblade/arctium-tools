@@ -48,11 +48,13 @@ namespace DataExtractor
                     });
                 }
 
-                var compressedTileData = Compress((temp.BaseStream as MemoryStream).ToArray());
+                var tileData = (temp.BaseStream as MemoryStream).ToArray();
+                var compressedTileData = Compress(tileData);
 
                 MapStream.Write(map.Id);
                 MapStream.Write(map.Name);
 
+                MapStream.Write(tileData.Length);
                 MapStream.Write(compressedTileData.Length);
                 MapStream.Write(compressedTileData);
             }

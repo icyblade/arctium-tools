@@ -22,7 +22,9 @@ namespace DataExtractor.Maps.Defines
 
         public ushort Id   { get; set; }
         public string Name { get; set; }
-        public uint Size   { get; set; }
+
+        public uint CompressedSize { get; set; }
+        public uint UncompressedSize { get; set; }
 
         public ConcurrentDictionary<ushort, MapTile> Tiles { get; set; }
     }
