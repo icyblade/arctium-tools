@@ -33,7 +33,7 @@ namespace DataExtractor
 
         static void ReadConsoleArgs(string[] args)
         {
-            for (int i = 1; i < args.Length; i += 2)
+            for (var i = 1; i < args.Length; i += 2)
             {
                 switch (args[i - 1])
                 {
@@ -83,7 +83,7 @@ namespace DataExtractor
                 Console.WriteLine("Initializing CASC library...");
 
                 if (string.IsNullOrEmpty(appFolder))
-                    cascHandler = new CASCHandler(Environment.CurrentDirectory);
+                    cascHandler = new CASCHandler(appFolder = Environment.CurrentDirectory);
                 else
                     cascHandler = new CASCHandler(Directory.GetParent(appFolder).ToString());
 
@@ -199,6 +199,8 @@ namespace DataExtractor
 
                 return;
             }
+
+            appFolder = wowBin;
 
             // Get dbc files from wow bin
             using (var sr = new StreamReader(bin))
