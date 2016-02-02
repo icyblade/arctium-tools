@@ -108,7 +108,7 @@ namespace DataExtractor
 
             Directory.CreateDirectory("./Project-WoW/Maps");
 
-            var mapDBC = cascHandler.ReadFile(@"DBFilesClient\Map.dbc");
+            var mapDBC = cascHandler.ReadFile(@"DBFilesClient\Map.db2");
             var mapDBData = DBReader.Read(mapDBC, typeof(MapDB));
             var apakStream = new APAKStream();
             var writtenMapCount = 0;
